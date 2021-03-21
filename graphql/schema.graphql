@@ -1,0 +1,68 @@
+schema {
+	query: Query
+	mutation: Mutation
+}
+
+type Query {
+	whoami: WhoAmIResponse!
+
+  getInventory(
+    limit: Int
+    nextToken: String
+    filter: GetItemsFilter
+  ): ItemConnection!
+
+}
+
+type ItemConnection {
+	resources: [Item!]!
+  resultCount: Int!
+  nextToken: String
+}
+
+type WhoAmIResponse {
+	sub: ID!
+	username: String
+	issuer: String
+	sourceIp: [String]
+	defaultAuthStrategy: String
+	claims: CognitoClaims
+}
+
+### CognitoClaims does not stick to the camelCase naming convention
+### because the fields are the literal values found in the Claims field
+### in the JWT token.
+type CognitoClaims {
+  at_hash: String
+  token_use: String
+  auth_time: String
+  iss: String
+  exp: String
+  iat: String
+  version: String
+  jti: String
+  client_id: String
+	scopes: [String]
+  meta: String
+}
+
+input StringOperators {
+    contains_or: [String]
+    contains_and: [String]
+    not_contains: [String]
+    equals_or: [String]
+    not_equals: [String]
+}
+
+input GetItemsFilter{
+    category: StringOperators
+    countryOfOrigin: StringOperators
+    color: StringOperators
+}
+
+type Item {
+  id: ID!
+  category: String!
+  countryOfOrigin: String!
+  color: String
+}

@@ -5,6 +5,7 @@ __pycache__
 .env
 .venv
 *.egg-info
+.vscode
 
 # CDK asset staging directory
 .cdk.staging

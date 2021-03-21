@@ -5,6 +5,16 @@ with open("README.md") as fp:
     long_description = fp.read()
 
 
+CDK_VERSION = None
+with open('.env.aws', 'r') as env_file:
+    env_vars = env_file.read().split('\n')
+    for env_var in env_vars:
+        if env_var.startswith('CDK_VERSION'):
+            CDK_VERSION = env_var.split('=')[1].replace('"', '')
+
+if not CDK_VERSION:
+    raise ValueError('The ENV VAR CDK_VERSION is required.')
+
 setuptools.setup(
     name="graphql_playground",
     version="0.0.1",
@@ -19,7 +29,10 @@ setuptools.setup(
     packages=setuptools.find_packages(where="graphql_playground"),
 
     install_requires=[
-        "aws-cdk.core==1.88.0",
+        f'aws-cdk.core=={CDK_VERSION}',
+        f'aws_cdk.aws_appsync=={CDK_VERSION}',
+        f'aws_cdk.aws_cognito=={CDK_VERSION}',
+        'python-dotenv==0.10.3',
     ],
 
     python_requires=">=3.6",
