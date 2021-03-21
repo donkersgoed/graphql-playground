@@ -14,7 +14,14 @@ type Query {
 }
 
 type Mutation {
-	addItem: AddItemResponse
+	addItem(item: AddItemInput!): AddItemResponse!
+}
+
+input AddItemInput {
+  name: String!
+  category: String!
+  countryOfOrigin: String!
+  color: String
 }
 
 type AddItemResponse {
@@ -68,6 +75,8 @@ input GetItemsFilter{
 
 type Item {
   id: ID!
+  name: String!
+  dateAdded: AWSDateTime!
   category: String!
   countryOfOrigin: String!
   color: String

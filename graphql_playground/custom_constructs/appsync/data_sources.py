@@ -65,18 +65,18 @@ class AppSyncDataSources(core.Construct):
         # Give this function access read access to the Items Table
         params['items_ddb_table'].grant_read_data(playground_get_inventory.function)
 
-        playground_at_item = LambdaResolverDataSource(
+        playground_add_item = LambdaResolverDataSource(
             scope=self,
-            construct_id='playground_at_item',
+            construct_id='playground_add_item',
             params={
                 'api': params['graphql_api'],
                 'type_name': 'Mutation',
                 'field_name': 'addItem',
-                'lambda_handler': 'handle_at_item',
+                'lambda_handler': 'handle_add_item',
                 'required_scopes': [
                     'scopes/items:write',
                 ],
             }
         )
         # Give this function access write access to the Items Table
-        params['items_ddb_table'].grant_write_data(playground_at_item.function)
+        params['items_ddb_table'].grant_write_data(playground_add_item.function)
