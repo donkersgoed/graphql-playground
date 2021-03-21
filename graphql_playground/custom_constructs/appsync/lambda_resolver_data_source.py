@@ -1,13 +1,17 @@
 """LambdaResolverDataSource module."""
 
+# Standard library imports
 import textwrap
 
+# Related third party imports
 from aws_cdk import (
     aws_appsync as appsync,
     aws_lambda as lambda_,
-    aws_logs as logs,
     core,
 )
+
+# Local application/library specific imports
+# -
 
 
 class LambdaResolverDataSource(core.Construct):
@@ -17,43 +21,23 @@ class LambdaResolverDataSource(core.Construct):
         self,
         scope: core.Construct,
         construct_id: str,
+        params,
         **kwargs,
     ) -> None:
         """Initialize LambdaResolverDataSource Class."""
         super().__init__(scope, construct_id, **kwargs)
 
-        # Take the provided parameters and add the `FUNCTION` parameter
-        # which equals the provided Construct ID. This is purely used as a
-        # logging parameter.
-        env_vars = {
-            **params['environment'],
-            **{
-                'FUNCTION': construct_id
-            }
-        }
-
-        # Override the memory_size if provided
-        memory_size = 512
-        if 'memory_size' in params:
-            memory_size = params['memory_size']
-        # Override the timeout if provided
-        timeout = core.Duration.seconds(60)
-        if 'timeout' in params:
-            timeout = params['timeout']
+        env_vars = {}
 
         # Create the Lambda Function
         self.function = lambda_.Function(
             scope=self,
-            id=f'{construct_id}-function-v2',
+            id=f'{construct_id}-function',
             function_name=construct_id,
             runtime=lambda_.Runtime.PYTHON_3_8,
-            code=lambda_.Code.asset('backend_api'),
-            layers=params['layers'],
-            timeout=timeout,
-            tracing=lambda_.Tracing.ACTIVE,
+            code=lambda_.Code.asset('playground_api'),
             handler=f"lambda_handler.{params['lambda_handler']}",
             environment=env_vars,
-            memory_size=memory_size,
         )
 
         # Create a Data Source for this function

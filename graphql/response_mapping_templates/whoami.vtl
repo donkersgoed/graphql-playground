@@ -1,0 +1,26 @@
+#set($sourceIps = [])
+#foreach ($ip in $context.identity.sourceIp)
+  $util.qr($sourceIps.add($ip.trim()))
+#end
+
+#set($result = {
+  "sub": $context.identity.sub,
+  "username": $context.identity.username,
+  "issuer": $context.identity.issuer,
+  "sourceIp": $sourceIps,
+  "claims": {
+    "at_hash": $context.identity.claims.get("at_hash"),
+    "scopes": $context.identity.claims.get("scope").split(" "),
+    "token_use": $context.identity.claims.get("token_use"),
+    "auth_time": $context.identity.claims.get("auth_time"),
+    "iss": $context.identity.claims.get("iss"),
+    "exp": $context.identity.claims.get("exp"),
+    "iat": $context.identity.claims.get("iat"),
+    "version": $context.identity.claims.get("version"),
+    "jti": $context.identity.claims.get("jti"),
+    "client_id": $context.identity.claims.get("client_id"),
+    "meta": $context
+  },
+  "defaultAuthStrategy": $context.identity.defaultAuthStrategy
+})
+$util.toJson($result)

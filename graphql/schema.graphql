@@ -1,6 +1,6 @@
 schema {
 	query: Query
-	mutation: Mutation
+  mutation: Mutation
 }
 
 type Query {
@@ -11,7 +11,14 @@ type Query {
     nextToken: String
     filter: GetItemsFilter
   ): ItemConnection!
+}
 
+type Mutation {
+	addItem: AddItemResponse
+}
+
+type AddItemResponse {
+  item: Item!
 }
 
 type ItemConnection {
@@ -43,7 +50,6 @@ type CognitoClaims {
   jti: String
   client_id: String
 	scopes: [String]
-  meta: String
 }
 
 input StringOperators {

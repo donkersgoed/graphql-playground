@@ -5,13 +5,13 @@ import os
 # Related third party imports
 from aws_cdk import (
     aws_appsync as appsync,
+    aws_dynamodb as dynamodb,
     core,
 )
-from dotenv import load_dotenv
 
 # Local application/library specific imports
-from custom_constructs.cognito.user_pool_and_clients import UserPoolAndClients
-from custom_constructs.appsync.lambda_resolver_data_source import LambdaResolverDataSource
+from custom_constructs.appsync.data_sources import AppSyncDataSources
+from custom_constructs.cognito.user_pool import UserPool
 
 
 class GraphqlPlaygroundStack(core.Stack):
@@ -19,10 +19,25 @@ class GraphqlPlaygroundStack(core.Stack):
     def __init__(self, scope: core.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # Create a Cognito User Pool and its User Pool Clients
-        user_pool_and_clients = UserPoolAndClients(
+        # Create the UserPool components (including Resource Server and User Pool Clients)
+        cognito = UserPool(
             scope=self,
-            construct_id='cognito'
+            construct_id='cognito-construct'
+        )
+
+        # The DynamoDB table to store the Items
+        items_table = dynamodb.Table(
+            scope=self,
+            id='items-table',
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            partition_key=dynamodb.Attribute(
+                name='PK',
+                type=dynamodb.AttributeType.STRING
+            ),
+            sort_key=dynamodb.Attribute(
+                name='SK',
+                type=dynamodb.AttributeType.STRING
+            ),
         )
 
         # Define where the GraphQL schema is stored
@@ -39,11 +54,20 @@ class GraphqlPlaygroundStack(core.Stack):
                 default_authorization=appsync.AuthorizationMode(
                     authorization_type=appsync.AuthorizationType.USER_POOL,
                     user_pool_config=appsync.UserPoolConfig(
-                        user_pool=user_pool_and_clients.user_pool
+                        user_pool=cognito.user_pool
                     )
                 )
             ),
             schema=appsync.Schema.from_asset(
                 file_path=schema_file_path
             )
+        )
+
+        AppSyncDataSources(
+            scope=self,
+            construct_id='appsync-datasources',
+            params={
+                'graphql_api': graphql_api,
+                'items_ddb_table': items_table,
+            }
         )

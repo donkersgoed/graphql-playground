@@ -32,6 +32,7 @@ setuptools.setup(
         f'aws-cdk.core=={CDK_VERSION}',
         f'aws_cdk.aws_appsync=={CDK_VERSION}',
         f'aws_cdk.aws_cognito=={CDK_VERSION}',
+        f'aws_cdk.aws_dynamodb=={CDK_VERSION}',
         'python-dotenv==0.10.3',
     ],
 
