@@ -85,13 +85,13 @@ type AddBookResponse {
 }
 
 type CarsConnection {
-	resources: [Car!]!
+	items: [Car!]!
   resultCount: Int!
   nextToken: String
 }
 
 type BooksConnection {
-	resources: [Book!]!
+	items: [Book!]!
   resultCount: Int!
   nextToken: String
 }

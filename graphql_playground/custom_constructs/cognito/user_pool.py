@@ -5,7 +5,9 @@ import os
 
 # Related third party imports
 from aws_cdk import (
+    aws_iam as iam,
     aws_cognito as cognito,
+    custom_resources as cr,
     core,
 )
 
@@ -29,6 +31,49 @@ class UserPool(core.Construct):
         self.user_pool = cognito.UserPool(
             scope=self,
             id='playground-user-pool',
+        )
+
+        # Create a Cognito Admin User
+        cognito.CfnUserPoolUser(
+            scope=self,
+            id='admin-user',
+            user_pool_id=self.user_pool.user_pool_id,
+            username='admin'
+        )
+
+        # Create a policy allowing us to set a permanent password.
+        # Don't use this in production! It's only for demo purposes.
+        allow_set_password = iam.PolicyStatement(
+            actions=[
+                'cognito-idp:AdminSetUserPassword',
+            ],
+            effect=iam.Effect.ALLOW,
+            resources=[
+                '*'
+            ]
+        )
+
+        # Create Custom Resource to set the user password
+        # Don't use this in production! It's only for demo purposes.
+        cr.AwsCustomResource(
+            scope=self,
+            id='cognito-set-password-cr',
+            on_create={
+                'service': 'CognitoIdentityServiceProvider',
+                'action': 'adminSetUserPassword',
+                'parameters': {
+                    'Password': 'thisisReally!1ns3cur3',
+                    'Permanent': True,
+                    'Username': 'admin',
+                    'UserPoolId': self.user_pool.user_pool_id,
+                },
+                'physical_resource_id': cr.PhysicalResourceId.of(
+                    id='CustomResourceAdminSetUserPassword'
+                )
+            },
+            policy=cr.AwsCustomResourcePolicy.from_statements(
+                statements=[allow_set_password]
+            )
         )
 
         # Create UserPoolDomain

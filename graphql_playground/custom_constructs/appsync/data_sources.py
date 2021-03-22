@@ -105,3 +105,41 @@ class AppSyncDataSources(core.Construct):
         )
         # Give this function access write access to the Items Table
         params['inventory_ddb_table'].grant_write_data(playground_add_book.function)
+
+        playground_get_books = LambdaResolverDataSource(
+            scope=self,
+            construct_id='playground_get_books',
+            params={
+                'api': params['graphql_api'],
+                'type_name': 'Query',
+                'field_name': 'getBooks',
+                'lambda_handler': 'handle_get_books',
+                'required_scopes': [
+                    'scopes/items:write',
+                ],
+                'environment': {
+                    'INVENTORY_TABLE': params['inventory_ddb_table'].table_name,
+                },
+            }
+        )
+        # Give this function access write access to the Items Table
+        params['inventory_ddb_table'].grant_read_data(playground_get_books.function)
+
+        playground_get_cars = LambdaResolverDataSource(
+            scope=self,
+            construct_id='playground_get_cars',
+            params={
+                'api': params['graphql_api'],
+                'type_name': 'Query',
+                'field_name': 'getCars',
+                'lambda_handler': 'handle_get_cars',
+                'required_scopes': [
+                    'scopes/items:write',
+                ],
+                'environment': {
+                    'INVENTORY_TABLE': params['inventory_ddb_table'].table_name,
+                },
+            }
+        )
+        # Give this function access write access to the Items Table
+        params['inventory_ddb_table'].grant_read_data(playground_get_cars.function)

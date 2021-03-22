@@ -1,10 +1,10 @@
 """Lambda handler for deployment functions."""
 
 # Standard library imports
-#-
+# -
 
 # Related third party imports
-#-
+# -
 
 # Local application/library specific imports
 from controllers.inventory_controller import InventoryController
@@ -14,13 +14,24 @@ def handle_add_book(event, _context):
     """Add a book to DynamoDB."""
     return _add_item('book', event)
 
+
 def handle_add_car(event, _context):
     """Add a car to DynamoDB."""
     return _add_item('car', event)
 
+
+def handle_get_books(event, _context):
+    """Get books from DynamoDB."""
+    return _get_items('book', event)
+
+
+def handle_get_cars(event, _context):
+    """Get cars from DynamoDB."""
+    return _get_items('car', event)
+
+
 def _add_item(item_type: str, event: dict) -> dict:
     """Add an Item (car or book) to DynamoDB."""
-    print(event)
     # Retrieve the selection set provided by the client. This might look like this:
     # "selectionSetList": [
     #     "car",
@@ -59,7 +70,7 @@ def _add_item(item_type: str, event: dict) -> dict:
             item_type=item_type,
             item=event['arguments'][item_type]
         )
-        print(added_item)
+
         # `added_item` is a dictionary of item properties, e.g.:
         # {
         #     "PK": "ITEM",
@@ -81,17 +92,28 @@ def _add_item(item_type: str, event: dict) -> dict:
             item_type: return_dict
         }
     except Exception as exc:  # pylint: disable=broad-except
-        print(exc)
         return {
             'success': False,
             'error_type': type(exc).__name__,
             'error': str(exc),
         }
 
-def handle_get_inventory(event, _context):
-    """Get items (cars, books or both) from DynamoDB."""
+
+def _get_items(item_type: str, event: dict) -> dict:
+    """Get items from DynamoDB."""
+    # Create a new dictionary with the 'selection_set' and 'arguments'
+    # found in the original event.
+    get_items_arguments = {
+        'item_type': item_type,
+        'selection_set': event['selectionSetList'],
+        **event['arguments'],
+    }
+
+    # Instantiate a new InventoryController
+    inventory_controller = InventoryController()
+    found_items = inventory_controller.get_items(params=get_items_arguments)
 
     return {
         'success': True,
-        # **results,
+        **found_items
     }

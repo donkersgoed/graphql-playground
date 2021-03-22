@@ -1,3 +1,4 @@
+"""The GraphqlPlaygroundStack module contains the main Stack."""
 
 # Standard library imports
 import os
@@ -15,7 +16,7 @@ from custom_constructs.cognito.user_pool import UserPool
 
 
 class GraphqlPlaygroundStack(core.Stack):
-
+    """The GraphqlPlaygroundStack class contains all CFN resources for the playground."""
     def __init__(self, scope: core.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
