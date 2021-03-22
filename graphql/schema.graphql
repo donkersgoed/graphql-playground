@@ -11,6 +11,12 @@ type Query {
     nextToken: String
     filter: GetCarsFilter
   ): CarsConnection!
+
+  getBooks(
+    limit: Int
+    nextToken: String
+    filter: GetBooksFilter
+  ): BooksConnection!
 }
 
 type Mutation {
@@ -84,6 +90,12 @@ type CarsConnection {
   nextToken: String
 }
 
+type BooksConnection {
+	resources: [Book!]!
+  resultCount: Int!
+  nextToken: String
+}
+
 type WhoAmIResponse {
 	sub: ID!
 	username: String
@@ -124,4 +136,9 @@ input GetCarsFilter{
     continentOfOrigin: StringOperators
     countryOfOrigin: StringOperators
     licensePlate: StringOperators
+}
+
+input GetBooksFilter{
+    title: StringOperators
+    author: StringOperators
 }

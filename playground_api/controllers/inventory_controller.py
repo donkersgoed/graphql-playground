@@ -18,19 +18,19 @@ class InventoryController:
             name=os.environ.get('INVENTORY_TABLE')
         )
 
-    def add_car(self, car: dict) -> dict:
-        """Add a car to DynamoDB."""
+    def add_item(self, item_type: str, item: dict) -> dict:
+        """Add an item (Car or Book) to DynamoDB."""
         item_uuid = str(uuid.uuid4())
 
-        car_data = {
+        item_data = {
             'PK': 'ITEM',
-            'SK': f'CAR#{item_uuid}',
+            'SK': f'{item_type.upper()}#{item_uuid}',  # e.g. CAR#1234 or BOOK#5411
             'id': item_uuid,
             'dateAdded': datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z',
-            **car
+            **item
         }
 
         self.inventory_table.put_item(
-            Item=car_data
+            Item=item_data
         )
-        return car_data
+        return item_data
