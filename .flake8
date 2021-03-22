@@ -1,0 +1,3 @@
+[flake8]
+exclude = .git,__pycache__,.env,cdk.out
+max-line-length = 120

@@ -1,0 +1,144 @@
+schema {
+	query: Query
+  mutation: Mutation
+}
+
+type Query {
+	whoami: WhoAmIResponse!
+
+  getCars(
+    limit: Int
+    nextToken: String
+    filter: GetCarsFilter
+  ): CarsConnection!
+
+  getBooks(
+    limit: Int
+    nextToken: String
+    filter: GetBooksFilter
+  ): BooksConnection!
+}
+
+type Mutation {
+	addCar(car: AddCarInput!): AddCarResponse!
+	addBook(book: AddBookInput!): AddBookResponse!
+}
+
+enum Continent {
+  AFRICA
+  ANTARCTICA
+  ASIA
+  AUSTRALIA
+  EUROPE
+  NORTHAMERICA
+  SOUTHAMERICA
+}
+
+interface Item {
+  id: ID!
+  itemType: String!
+  dateAdded: AWSDateTime!
+}
+
+type Car implements Item {
+  id: ID!
+  itemType: String!
+  dateAdded: AWSDateTime!
+  make: String!
+  model: String!
+  color: String
+  continentOfOrigin: Continent
+  countryOfOrigin: String
+  licensePlate: String
+}
+
+type Book implements Item {
+  id: ID!
+  itemType: String!
+  dateAdded: AWSDateTime!
+  title: String!
+  author: String!
+  yearReleased: Int!
+}
+
+input AddCarInput {
+  make: String!
+  model: String!
+  color: String
+  continentOfOrigin: Continent
+  countryOfOrigin: String
+  licensePlate: String
+}
+
+input AddBookInput {
+  title: String!
+  author: String!
+  yearReleased: Int!
+}
+
+type AddCarResponse {
+  car: Car!
+}
+
+type AddBookResponse {
+  book: Book!
+}
+
+type CarsConnection {
+	items: [Car!]!
+  resultCount: Int!
+  nextToken: String
+}
+
+type BooksConnection {
+	items: [Book!]!
+  resultCount: Int!
+  nextToken: String
+}
+
+type WhoAmIResponse {
+	sub: ID!
+	username: String
+	issuer: String
+	sourceIp: [String]
+	defaultAuthStrategy: String
+	claims: CognitoClaims
+}
+
+### CognitoClaims does not stick to the camelCase naming convention
+### because the fields are the literal values found in the Claims field
+### in the JWT token.
+type CognitoClaims {
+  at_hash: String
+  token_use: String
+  auth_time: String
+  iss: String
+  exp: String
+  iat: String
+  version: String
+  jti: String
+  client_id: String
+	scopes: [String]
+}
+
+input StringOperators {
+    containsOr: [String]
+    containsAnd: [String]
+    notContains: [String]
+    equalsOr: [String]
+    notEquals: [String]
+}
+
+input GetCarsFilter{
+    make: StringOperators
+    model: StringOperators
+    color: StringOperators
+    continentOfOrigin: StringOperators
+    countryOfOrigin: StringOperators
+    licensePlate: StringOperators
+}
+
+input GetBooksFilter{
+    title: StringOperators
+    author: StringOperators
+}
