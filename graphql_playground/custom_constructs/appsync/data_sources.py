@@ -114,7 +114,7 @@ class AppSyncDataSources(core.Construct):
                 'field_name': 'getBooks',
                 'lambda_handler': 'handle_get_books',
                 'required_scopes': [
-                    'scopes/items:write',
+                    'scopes/items:read',
                 ],
                 'environment': {
                     'INVENTORY_TABLE': params['inventory_ddb_table'].table_name,
@@ -133,7 +133,7 @@ class AppSyncDataSources(core.Construct):
                 'field_name': 'getCars',
                 'lambda_handler': 'handle_get_cars',
                 'required_scopes': [
-                    'scopes/items:write',
+                    'scopes/items:read',
                 ],
                 'environment': {
                     'INVENTORY_TABLE': params['inventory_ddb_table'].table_name,
