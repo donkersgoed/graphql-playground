@@ -32,7 +32,7 @@ class AppSyncDataSources(core.Construct):
         # A NoneDataSource has no backing data. Processing is purely done in the templates.
         who_am_i_data_source = appsync.NoneDataSource(
             scope=self,
-            id='lz_graphql_who_am_i_datasource',
+            id='playground_who_am_i_datasource',
             api=params['graphql_api']
         )
 
