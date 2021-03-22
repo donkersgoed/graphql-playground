@@ -25,6 +25,8 @@ class InventoryController:
         """Add an item (Car or Book) to DynamoDB."""
         item_uuid = str(uuid.uuid4())
 
+        # Add a few common values (PK, SK, id, date), then store all the attributes
+        # provided by the client as-is.
         item_data = {
             'PK': 'ITEM',
             'SK': f'{item_type.upper()}#{item_uuid}',  # e.g. CAR#1234 or BOOK#5411
@@ -107,7 +109,8 @@ class InventoryController:
         last_evaluated_key_b64 = None
         last_evaluated_key = ddb_response.get('LastEvaluatedKey')
         if last_evaluated_key:
-            # Grab the Sort Key and base64 encode it
+            # Grab the Sort Key and base64 encode it. This can be used by the client as
+            # a `nextToken`, which will tell DynamoDB where to continue its next Query.
             last_evaluated_key_b64 = base64.b64encode(last_evaluated_key['SK'].encode()).decode()
         return {
             'items': items,
