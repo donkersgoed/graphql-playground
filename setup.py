@@ -25,11 +25,11 @@ setuptools.setup(
     name='graphql_playground',
     version='0.0.1',
 
-    description='An empty CDK Python app',
+    description='An example implementation of an AppSync API in CDK.',
     long_description=long_description,
     long_description_content_type='text/markdown',
 
-    author='author',
+    author='Luc van Donkersgoed',
 
     package_dir={'': 'graphql_playground'},
     packages=setuptools.find_packages(where='graphql_playground'),
@@ -42,7 +42,7 @@ setuptools.setup(
         'python-dotenv==0.10.3',
     ],
 
-    python_requires='>=3.6',
+    python_requires='>=3.7',
 
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -53,11 +53,12 @@ setuptools.setup(
 
         'Programming Language :: JavaScript',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
 
         'Topic :: Software Development :: Code Generators',
+        'Topic :: GraphQL',
         'Topic :: Utilities',
 
         'Typing :: Typed',

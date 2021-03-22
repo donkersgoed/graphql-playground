@@ -21,10 +21,9 @@ class AppSyncDataSources(core.Construct):
         scope: core.Construct,
         construct_id: str,
         params: dict,
-        **kwargs
     ) -> None:
         """Initialize AppSyncDataSources Class."""
-        super().__init__(scope, construct_id, **kwargs)
+        super().__init__(scope, construct_id)
 
         file_path = os.path.dirname(os.path.realpath(__file__))
         request_templates_path = f'{file_path}/../../../graphql/request_mapping_templates'

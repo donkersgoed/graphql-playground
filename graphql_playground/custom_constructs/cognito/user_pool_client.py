@@ -21,10 +21,9 @@ class UserPoolClient(core.Construct):
         scope: core.Construct,
         construct_id: str,
         params,
-        **kwargs,
     ) -> None:
         """Initialize the UserPoolClient Class."""
-        super().__init__(scope, construct_id, **kwargs)
+        super().__init__(scope, construct_id)
 
         if params['is_machine_client']:
             flows = cognito.OAuthFlows(

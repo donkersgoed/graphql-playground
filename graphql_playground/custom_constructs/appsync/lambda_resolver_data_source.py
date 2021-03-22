@@ -22,10 +22,9 @@ class LambdaResolverDataSource(core.Construct):
         scope: core.Construct,
         construct_id: str,
         params,
-        **kwargs,
     ) -> None:
         """Initialize LambdaResolverDataSource Class."""
-        super().__init__(scope, construct_id, **kwargs)
+        super().__init__(scope, construct_id)
 
         # Create the Lambda Function
         self.function = lambda_.Function(

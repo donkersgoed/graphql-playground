@@ -22,10 +22,9 @@ class UserPool(core.Construct):
         self,
         scope: core.Construct,
         construct_id: str,
-        **kwargs,
     ) -> None:
         """Initialize the UserPool Class."""
-        super().__init__(scope, construct_id, **kwargs)
+        super().__init__(scope, construct_id)
 
         # Create a Cognito User Pool
         self.user_pool = cognito.UserPool(

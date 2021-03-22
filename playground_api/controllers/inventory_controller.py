@@ -40,7 +40,7 @@ class InventoryController:
         )
         return item_data
 
-    def get_items(self, params) -> list:
+    def get_items(self, params: dict) -> dict:
         """Get items from the inventory"""
 
         item_type = params['item_type']
@@ -80,8 +80,9 @@ class InventoryController:
 
             # Build a ProjectionExpression and ExpressionAttributeNames with the provided selection set,
             # then store them in the parameters provided to the DynamoDB Query.
-            query_params['ProjectionExpression'], query_params['ExpressionAttributeNames'] = \
-                self._build_projection_expression(selection_set)
+            projection_expression = self._build_projection_expression(selection_set)
+            query_params['ProjectionExpression'] = projection_expression['projection_expression']
+            query_params['ExpressionAttributeNames'] = projection_expression['expression_attribute_names']
 
         # If the user provides filter parameters, build a FilterExpression with them
         # and provide it to the query. This filter will be applied after the query has retrieved
@@ -119,7 +120,7 @@ class InventoryController:
         }
 
     @staticmethod
-    def _build_projection_expression(selection_set):
+    def _build_projection_expression(selection_set: list) -> dict:
         """Build a ProjectionExpression and ExpressionAttributeNames for the provided set of GraphQL fields."""
         # The ProjectionExpression can't contain words like 'Region', so we use numbered references.
         # After building, the ProjectionExpression looks like this: "#K0, #K1"
@@ -133,7 +134,10 @@ class InventoryController:
             f'#K{index}': f'{selection_key}' for index, selection_key in enumerate(selection_set)
         }
 
-        return projection_expression, expression_attribute_names
+        return {
+            'projection_expression': projection_expression,
+            'expression_attribute_names': expression_attribute_names
+        }
 
     @staticmethod
     def _append_filter(source_filter, operation, additional_filter):
