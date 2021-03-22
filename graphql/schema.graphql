@@ -6,30 +6,80 @@ schema {
 type Query {
 	whoami: WhoAmIResponse!
 
-  getInventory(
+  getCars(
     limit: Int
     nextToken: String
-    filter: GetItemsFilter
-  ): ItemConnection!
+    filter: GetCarsFilter
+  ): CarsConnection!
 }
 
 type Mutation {
-	addItem(item: AddItemInput!): AddItemResponse!
+	addCar(car: AddCarInput!): AddCarResponse!
+	addBook(book: AddBookInput!): AddBookResponse!
 }
 
-input AddItemInput {
-  name: String!
-  category: String!
-  countryOfOrigin: String!
+enum Continent {
+  AFRICA
+  ANTARCTICA
+  ASIA
+  AUSTRALIA
+  EUROPE
+  NORTHAMERICA
+  SOUTHAMERICA
+}
+
+interface Item {
+  id: ID!
+  itemType: String!
+  dateAdded: AWSDateTime!
+}
+
+type Car implements Item {
+  id: ID!
+  itemType: String!
+  dateAdded: AWSDateTime!
+  make: String!
+  model: String!
   color: String
+  continentOfOrigin: Continent
+  countryOfOrigin: String
+  licensePlate: String
 }
 
-type AddItemResponse {
-  item: Item!
+type Book implements Item {
+  id: ID!
+  itemType: String!
+  dateAdded: AWSDateTime!
+  title: String!
+  author: String!
+  yearReleased: Int!
 }
 
-type ItemConnection {
-	resources: [Item!]!
+input AddCarInput {
+  make: String!
+  model: String!
+  color: String
+  continentOfOrigin: Continent
+  countryOfOrigin: String
+  licensePlate: String
+}
+
+input AddBookInput {
+  title: String!
+  author: String!
+  yearReleased: Int!
+}
+
+type AddCarResponse {
+  car: Car!
+}
+
+type AddBookResponse {
+  book: Book!
+}
+
+type CarsConnection {
+	resources: [Car!]!
   resultCount: Int!
   nextToken: String
 }
@@ -60,24 +110,18 @@ type CognitoClaims {
 }
 
 input StringOperators {
-    contains_or: [String]
-    contains_and: [String]
-    not_contains: [String]
-    equals_or: [String]
-    not_equals: [String]
+    containsOr: [String]
+    containsAnd: [String]
+    notContains: [String]
+    equalsOr: [String]
+    notEquals: [String]
 }
 
-input GetItemsFilter{
-    category: StringOperators
-    countryOfOrigin: StringOperators
+input GetCarsFilter{
+    make: StringOperators
+    model: StringOperators
     color: StringOperators
-}
-
-type Item {
-  id: ID!
-  name: String!
-  dateAdded: AWSDateTime!
-  category: String!
-  countryOfOrigin: String!
-  color: String
+    continentOfOrigin: StringOperators
+    countryOfOrigin: StringOperators
+    licensePlate: StringOperators
 }

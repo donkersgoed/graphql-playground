@@ -25,10 +25,10 @@ class GraphqlPlaygroundStack(core.Stack):
             construct_id='cognito-construct'
         )
 
-        # The DynamoDB table to store the Items
-        items_table = dynamodb.Table(
+        # The DynamoDB table to store the cars and other objects
+        inventory_table = dynamodb.Table(
             scope=self,
-            id='items-table',
+            id='inventory-table',
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
             partition_key=dynamodb.Attribute(
                 name='PK',
@@ -68,6 +68,6 @@ class GraphqlPlaygroundStack(core.Stack):
             construct_id='appsync-datasources',
             params={
                 'graphql_api': graphql_api,
-                'items_ddb_table': items_table,
+                'inventory_ddb_table': inventory_table,
             }
         )

@@ -27,8 +27,6 @@ class LambdaResolverDataSource(core.Construct):
         """Initialize LambdaResolverDataSource Class."""
         super().__init__(scope, construct_id, **kwargs)
 
-        env_vars = {}
-
         # Create the Lambda Function
         self.function = lambda_.Function(
             scope=self,
@@ -37,7 +35,7 @@ class LambdaResolverDataSource(core.Construct):
             runtime=lambda_.Runtime.PYTHON_3_8,
             code=lambda_.Code.asset('playground_api'),
             handler=f"lambda_handler.{params['lambda_handler']}",
-            environment=env_vars,
+            environment=params['environment'] or {},
         )
 
         # Create a Data Source for this function
