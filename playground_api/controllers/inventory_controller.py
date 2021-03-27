@@ -182,9 +182,9 @@ class InventoryController:
         filter_expression = None
         # Then we loop over every element of the filter_dict, defined just above.
         # This will return values like 'model', 'make', 'title' or other terms to filter on.
-        for filter_key in filter_dict.keys():
+        for filter_key, filter_values in filter_dict.items():
             key_filter = None
-            for filter_op, filter_op_values in filter_dict[filter_key].items():
+            for filter_op, filter_op_values in filter_values.items():
                 # e.g. filter_key = 'make', filter_op = 'containsOr', filter_op_values = ['esla', 'olksw']
                 # This would filter the 'make' by items that contain 'esla' OR 'olkswag'.
 
