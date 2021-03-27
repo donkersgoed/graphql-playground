@@ -143,6 +143,8 @@ class InventoryController:
     def _append_filter(source_filter, operation, additional_filter):
         if source_filter is None:
             return additional_filter
+        elif additional_filter is None:
+            return source_filter
         if operation == 'AND':
             return source_filter & additional_filter
         if operation == 'OR':
@@ -191,8 +193,8 @@ class InventoryController:
                 # Create a new sub filter for the multiple values for one key, for example
                 # (make.contains('esla' OR 'olkswag')).
                 sub_filter = None
-                if filter_op == 'containsOr':
-                    for filter_op_value in filter_op_values:
+                for filter_op_value in filter_op_values:
+                    if filter_op == 'containsOr':
                         # Create a 'contains' comparison for every key, e.g. (make.contains('esla'))
                         sub_key_filter = Attr(filter_key).contains(filter_op_value)
 
@@ -200,15 +202,9 @@ class InventoryController:
                         # like (make.contains('esla' OR 'olkswag'))
                         sub_filter = self._append_filter(sub_filter, 'OR', sub_key_filter)
 
-                    # When all keywords have been combined, add it to key_filter with an AND operator.
-                    # This creates a filter like
-                    # "(make.contains('esla' OR 'olkswag')) AND (model.notEquals('Model X'))".
-                    key_filter = self._append_filter(key_filter, 'AND', sub_filter)
-
-                elif filter_op == 'containsAnd':
-                    # Like the one above, but with an AND operator, for example (make.contains('Tes' AND 'la'))
-                    # to match Tesla and Testorilla.
-                    for filter_op_value in filter_op_values:
+                    elif filter_op == 'containsAnd':
+                        # Like the one above, but with an AND operator, for example (make.contains('Tes' AND 'la'))
+                        # to match Tesla and Testorilla.
                         # Create a 'contains' comparison for every key, e.g. (make.contains('Tes'))
                         sub_key_filter = Attr(filter_key).contains(filter_op_value)
 
@@ -216,15 +212,9 @@ class InventoryController:
                         # like (make.contains('Tes' AND 'la'))
                         sub_filter = self._append_filter(sub_filter, 'AND', sub_key_filter)
 
-                    # When all keywords have been combined, add it to key_filter with an AND operator.
-                    # This creates a filter like
-                    # "(make.contains('Tes' AND 'la')) AND (model.notEquals('Model X'))".
-                    key_filter = self._append_filter(key_filter, 'AND', sub_filter)
-
-                elif filter_op == 'notContains':
-                    # Like the one above, but with an Negate (~) operator, for example
-                    # (make.notContains('Tes' AND 'Volksw')).
-                    for filter_op_value in filter_op_values:
+                    elif filter_op == 'notContains':
+                        # Like the one above, but with an Negate (~) operator, for example
+                        # (make.notContains('Tes' AND 'Volksw')).
                         # Create a 'contains' comparison for every key, e.g. (make.contains('Tes'))
                         sub_key_filter = ~Attr(filter_key).contains(filter_op_value)
 
@@ -232,13 +222,7 @@ class InventoryController:
                         # like (make.notContains('Tes' AND 'Volksw'))
                         sub_filter = self._append_filter(sub_filter, 'AND', sub_key_filter)
 
-                    # When all keywords have been combined, add it to key_filter with an AND operator.
-                    # This creates a filter like
-                    # "(make.notContains('Tes' AND 'Volksw') AND (model.notEquals('Model X'))".
-                    key_filter = self._append_filter(key_filter, 'AND', sub_filter)
-
-                elif filter_op == 'equalsOr':
-                    for filter_op_value in filter_op_values:
+                    elif filter_op == 'equalsOr':
                         # Create a 'equals' comparison for every key, e.g. (make.equals('Tesla'))
                         sub_key_filter = Attr(filter_key).eq(filter_op_value)
 
@@ -246,15 +230,9 @@ class InventoryController:
                         # like (make.equals('Tesla' OR 'Volkswagen'))
                         sub_filter = self._append_filter(sub_filter, 'OR', sub_key_filter)
 
-                    # When all keywords have been combined, add it to key_filter with an AND operator.
-                    # This creates a filter like
-                    # "(make.equals('Tesla' OR 'Volkswagen')) AND (model.notEquals('Model X'))".
-                    key_filter = self._append_filter(key_filter, 'AND', sub_filter)
-
-                elif filter_op == 'notEquals':
-                    # Like the notContains one above, but with an equals operator, for example
-                    # (make.notEquals('Tesla' AND 'Volkswagen')).
-                    for filter_op_value in filter_op_values:
+                    elif filter_op == 'notEquals':
+                        # Like the notContains one above, but with an equals operator, for example
+                        # (make.notEquals('Tesla' AND 'Volkswagen')).
                         # Create a 'equals' comparison for every key, e.g. (make.notEquals('Tesla'))
                         sub_key_filter = ~Attr(filter_key).eq(filter_op_value)
 
@@ -262,13 +240,13 @@ class InventoryController:
                         # like (make.notEquals('Tesla' AND 'Volkswagen'))
                         sub_filter = self._append_filter(sub_filter, 'AND', sub_key_filter)
 
-                    # When all keywords have been combined, add it to key_filter with an AND operator.
-                    # This creates a filter like
-                    # "(make.notEquals('Tesla' AND 'Volkswagen')) AND (model.notEquals('Mach-E'))".
-                    key_filter = self._append_filter(key_filter, 'AND', sub_filter)
+                # When all keywords have been combined, add it to key_filter with an AND operator.
+                # This creates a filter like
+                # "(make.notEquals('Tesla' AND 'Volkswagen')) AND (model.notEquals('Mach-E'))".
+                key_filter = self._append_filter(key_filter, 'AND', sub_filter)
 
-                # Finally, bind the key_filters together into filter_expression.
-                filter_expression = self._append_filter(filter_expression, 'AND', key_filter)
+            # Finally, bind the key_filters together into filter_expression.
+            filter_expression = self._append_filter(filter_expression, 'AND', key_filter)
 
         # Return the filter expression built after looping over the keys.
         return filter_expression
