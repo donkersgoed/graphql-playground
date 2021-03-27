@@ -142,8 +142,12 @@ class InventoryController:
     @staticmethod
     def _append_filter(source_filter, operation, additional_filter):
         if source_filter is None:
+            # This is the first addition to the filter, return
+            # the filter being added as-is.
             return additional_filter
-        elif additional_filter is None:
+        if additional_filter is None:
+            # We're trying to add nothing to the source filter
+            # so just return the source filter.
             return source_filter
         if operation == 'AND':
             return source_filter & additional_filter
