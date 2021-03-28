@@ -125,7 +125,7 @@ class InventoryController:
         # The ProjectionExpression can't contain words like 'Region', so we use numbered references.
         # After building, the ProjectionExpression looks like this: "#K0, #K1"
         projection_expression = ', '.join(
-            f'#K{index}' for index, _selection_key in enumerate(selection_set)
+            f'#K{index}' for index in range(len(selection_set))
         )
 
         # Then we create a map to link the #Kx values to the actual keys we want to resolve.
