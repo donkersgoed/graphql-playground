@@ -131,7 +131,7 @@ class InventoryController:
         # Then we create a map to link the #Kx values to the actual keys we want to resolve.
         # The final ExpressionAttributeNames look like this: {"#K0": "make", "#K1": "model"}
         expression_attribute_names = {
-            f'#K{index}': f'{selection_key}' for index, selection_key in enumerate(selection_set)
+            f'#K{index}': selection_key for index, selection_key in enumerate(selection_set)
         }
 
         return {
